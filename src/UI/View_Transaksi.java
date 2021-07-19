@@ -5,11 +5,22 @@
  */
 package UI;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import modul.konek;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -18,34 +29,31 @@ import modul.konek;
 public class View_Transaksi extends javax.swing.JFrame {
 
     /**
-     * Creates new form View_Transaksi
+     * Creates new form View_
      */
     public View_Transaksi() {
         initComponents();
         tampilRiwayat("");
+        setLocationRelativeTo(this);
     }
     void tampilRiwayat(String nama){
         
         DefaultTableModel model = (DefaultTableModel) tbl_transaksi.getModel();
-        String sql = "SELECT detil_transaksi.no_trans, transaksi.total_belanja,transaksi.tanggal,\n" +
-                    "barang.kode_barang, barang.nama_barang, barang.harga_jual, detil_transaksi.kuantitas\n"
-                     +
-                    "FROM detil_transaksi INNER JOIN transaksi \n" +
-                    "ON transaksi.no_trans = detil_transaksi.no_trans \n" +
-                    "INNER JOIN barang ON barang.kode_barang = detil_transaksi.kode_barang";
-                    
+                    // dia menjadi ganda gara gara inner join
         try {
+            model.setRowCount(0);
             Statement st = (Statement)konek.GetConnection().createStatement();
-            ResultSet rs = st.executeQuery(sql);
+            ResultSet rs = st.executeQuery("SELECT * FROM detil_transaksi WHERE nama_barang Like '%" + nama + "%'");
             while(rs.next()){
                 Object[] data = new Object[]{
                 rs.getString(1),
+                rs.getString(2),
+                rs.getString(3),
                 rs.getString(4),
                 rs.getString(5),
                 rs.getString(6),
                 rs.getString(7),
-                rs.getString(2),
-                rs.getString(3)
+                rs.getString(8)
               };
               model.addRow(data);
             }
@@ -66,13 +74,13 @@ public class View_Transaksi extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        vcari = new javax.swing.JTextField();
+        txt_cari = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_transaksi = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
         btn_kembali = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
-        btn_edit = new javax.swing.JButton();
+        btn_cetak = new javax.swing.JButton();
 
         jLabel5.setText("CARI DATA :");
 
@@ -84,14 +92,14 @@ public class View_Transaksi extends javax.swing.JFrame {
 
         jLabel2.setText("CARI DATA :");
 
-        vcari.addActionListener(new java.awt.event.ActionListener() {
+        txt_cari.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                vcariActionPerformed(evt);
+                txt_cariActionPerformed(evt);
             }
         });
-        vcari.addKeyListener(new java.awt.event.KeyAdapter() {
+        txt_cari.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                vcariKeyReleased(evt);
+                txt_cariKeyReleased(evt);
             }
         });
 
@@ -102,7 +110,7 @@ public class View_Transaksi extends javax.swing.JFrame {
 
             },
             new String [] {
-                "No Trans", "kode barang", "nama barang", "harga ", "kuantitas", "Total Belanja", "Tanggal"
+                "id_detil", "No Trans", "Kode Barang", "nama Barang", "Harga Jual", "Kuantitas", "Total Harga", "Tanggal"
             }
         ));
         tbl_transaksi.setRowHeight(30);
@@ -122,11 +130,11 @@ public class View_Transaksi extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         jLabel6.setText("Penjualan Bulan Ini");
 
-        btn_edit.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        btn_edit.setText("CETAK");
-        btn_edit.addActionListener(new java.awt.event.ActionListener() {
+        btn_cetak.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        btn_cetak.setText("CETAK");
+        btn_cetak.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_editActionPerformed(evt);
+                btn_cetakActionPerformed(evt);
             }
         });
 
@@ -138,7 +146,7 @@ public class View_Transaksi extends javax.swing.JFrame {
                 .addGap(56, 56, 56)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(btn_edit)
+                        .addComponent(btn_cetak)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_kembali))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -148,7 +156,7 @@ public class View_Transaksi extends javax.swing.JFrame {
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel2)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(vcari, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txt_cari, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addComponent(jLabel3)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -167,14 +175,14 @@ public class View_Transaksi extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(vcari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_cari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
                 .addGap(31, 31, 31)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_kembali)
-                    .addComponent(btn_edit))
+                    .addComponent(btn_cetak))
                 .addGap(50, 50, 50))
         );
 
@@ -192,22 +200,32 @@ public class View_Transaksi extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void vcariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vcariActionPerformed
+    private void txt_cariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_cariActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_vcariActionPerformed
+    }//GEN-LAST:event_txt_cariActionPerformed
 
     private void btn_kembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_kembaliActionPerformed
         // TODO add your handling code here:
+        Dashboard db = new Dashboard();
+        db.setVisible(true);
+        
+        dispose();
     }//GEN-LAST:event_btn_kembaliActionPerformed
 
-    private void btn_editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editActionPerformed
+    private void btn_cetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cetakActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_editActionPerformed
+     try {
+        JasperPrint jp = JasperFillManager.fillReport(getClass().getResourceAsStream("src/Report/ReportPenjualan.jasper"), null, konek.GetConnection());
+        JasperViewer.viewReport(jp, false);
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(rootPane, e);
+        }
+    }//GEN-LAST:event_btn_cetakActionPerformed
 
-    private void vcariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_vcariKeyReleased
+    private void txt_cariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_cariKeyReleased
         // TODO add your handling code here:
-        tampilRiwayat(vcari.getText());
-    }//GEN-LAST:event_vcariKeyReleased
+        tampilRiwayat(txt_cari.getText());
+    }//GEN-LAST:event_txt_cariKeyReleased
 
     /**
      * @param args the command line arguments
@@ -245,7 +263,7 @@ public class View_Transaksi extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn_edit;
+    private javax.swing.JButton btn_cetak;
     private javax.swing.JButton btn_kembali;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -255,6 +273,6 @@ public class View_Transaksi extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tbl_transaksi;
-    private javax.swing.JTextField vcari;
+    private javax.swing.JTextField txt_cari;
     // End of variables declaration//GEN-END:variables
 }
