@@ -175,7 +175,7 @@ public class Form_login extends javax.swing.JFrame {
             
             
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(rootPane, "g4g4l");
+            JOptionPane.showMessageDialog(rootPane, "Gagal");
         }
     }//GEN-LAST:event_btn_loginActionPerformed
 
