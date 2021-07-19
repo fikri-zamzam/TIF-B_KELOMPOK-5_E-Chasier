@@ -1,0 +1,5 @@
+1. buat database dengan nama db_e-cashier
+2. pilih import 
+3. klik choosefile
+4. pilih di folder ini 
+5. run
