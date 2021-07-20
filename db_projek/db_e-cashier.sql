@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 04, 2021 at 04:32 PM
+-- Generation Time: Jul 19, 2021 at 04:16 PM
 -- Server version: 10.4.17-MariaDB
--- PHP Version: 8.0.2
+-- PHP Version: 7.4.15
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -29,11 +29,10 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `barang` (
   `kode_barang` char(6) NOT NULL,
-  `nama_barang` varchar(100) NOT NULL,
+  `nama_barang` varchar(30) NOT NULL,
   `harga_beli` int(6) NOT NULL,
   `harga_jual` int(6) NOT NULL,
   `jumlah` int(5) NOT NULL,
-  `diskon` int(3) NOT NULL,
   `kategori` varchar(40) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -41,11 +40,12 @@ CREATE TABLE `barang` (
 -- Dumping data for table `barang`
 --
 
-INSERT INTO `barang` (`kode_barang`, `nama_barang`, `harga_beli`, `harga_jual`, `jumlah`, `diskon`, `kategori`) VALUES
-('bara01', 'MINYAK FORTUNER', 10000, 12000, 40, 10, 'Sembako'),
-('bara02', 'Sabun Life boi', 5000, 6000, 30, 10, 'Alat mandi'),
-('bara03', 'Beras Dua Anak', 13000, 15000, 42, 10, 'Alat tulis'),
-('bara04', 'Nextar 3080 Ti', 3500, 4000, 52, 5, 'Snack');
+INSERT INTO `barang` (`kode_barang`, `nama_barang`, `harga_beli`, `harga_jual`, `jumlah`, `kategori`) VALUES
+('bara1', 'Minyak Fortuner', 10000, 12000, 18, 'Sembako'),
+('bara2', 'Sabun Life boi', 5000, 6000, -9, 'Alat mandi'),
+('bara3', 'Beras Dua Anak', 13000, 15000, 38, 'Alat tulis'),
+('bara4', 'Nextar 3080 Ti', 3500, 4000, 17, 'Snack'),
+('bara5', 'Telur 1 KG', 19000, 22000, 31, 'Sembako');
 
 -- --------------------------------------------------------
 
@@ -54,22 +54,27 @@ INSERT INTO `barang` (`kode_barang`, `nama_barang`, `harga_beli`, `harga_jual`, 
 --
 
 CREATE TABLE `detil_transaksi` (
-  `id_detil` char(8) NOT NULL,
-  `no_trans` char(7) NOT NULL,
-  `id_petugas` char(6) NOT NULL,
+  `id_detil` varchar(7) NOT NULL,
+  `no_trans` int(4) NOT NULL,
   `kode_barang` char(6) NOT NULL,
-  `kuantitas` int(4) NOT NULL
+  `nama_barang` varchar(30) NOT NULL,
+  `harga_jual` int(6) NOT NULL,
+  `kuantitas` int(3) NOT NULL,
+  `total_belanja` int(8) NOT NULL,
+  `tanggal` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `detil_transaksi`
 --
 
-INSERT INTO `detil_transaksi` (`id_detil`, `no_trans`, `id_petugas`, `kode_barang`, `kuantitas`) VALUES
-('detil001', 'notra01', 'petu01', 'bara04', 1),
-('detil002', 'notra02', 'petu01', 'bara01', 2),
-('detil003', 'notra03', 'petu01', 'bara02', 1),
-('detil004', 'notra03', 'petu01', 'bara04', 1);
+INSERT INTO `detil_transaksi` (`id_detil`, `no_trans`, `kode_barang`, `nama_barang`, `harga_jual`, `kuantitas`, `total_belanja`, `tanggal`) VALUES
+('detil1', 1, 'bara1', 'Minyak Fortuner', 12000, 1, 12000, '2021-07-18'),
+('detil2', 8, 'bara5', 'Telur 1 KG', 22000, 1, 22000, '2021-07-19'),
+('detil3', 9, 'bara4', 'Nextar 3080 Ti', 20000, 5, 20000, '2021-07-19'),
+('detil4', 10, 'bara1', 'Minyak Fortuner', 36000, 3, 36000, '2021-07-19'),
+('detil5', 12, 'bara1', 'Minyak Fortuner', 24000, 2, 54000, '2021-07-19'),
+('detil6', 12, 'bara2', 'Sabun Life boi', 30000, 5, 54000, '2021-07-19');
 
 -- --------------------------------------------------------
 
@@ -95,34 +100,22 @@ INSERT INTO `kategori` (`kode_kategori`, `nama_kategori`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kumpulan_query`
---
-
-CREATE TABLE `kumpulan_query` (
-  `nama` varchar(30) NOT NULL,
-  `query` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `petugas`
 --
 
 CREATE TABLE `petugas` (
   `id_petugas` char(6) NOT NULL,
-  `username` varchar(40) NOT NULL,
-  `password` varchar(40) NOT NULL,
-  `nama_depan` varchar(50) NOT NULL,
-  `nama_belakang` varchar(70) NOT NULL
+  `username` varchar(20) NOT NULL,
+  `password_petugas` varchar(20) NOT NULL,
+  `nama_petugas` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `petugas`
 --
 
-INSERT INTO `petugas` (`id_petugas`, `username`, `password`, `nama_depan`, `nama_belakang`) VALUES
-('petu01', 'petugas1', 'petugas2', 'Tehyoung', 'jongkuk park');
+INSERT INTO `petugas` (`id_petugas`, `username`, `password_petugas`, `nama_petugas`) VALUES
+('petu1', 'Gitaran', 'Admin', 'Fikri ');
 
 -- --------------------------------------------------------
 
@@ -131,8 +124,8 @@ INSERT INTO `petugas` (`id_petugas`, `username`, `password`, `nama_depan`, `nama
 --
 
 CREATE TABLE `transaksi` (
-  `no_trans` char(7) NOT NULL,
-  `total_belanja` int(10) NOT NULL,
+  `no_trans` int(4) NOT NULL,
+  `total_belanja` int(8) NOT NULL,
   `tanggal` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -141,9 +134,12 @@ CREATE TABLE `transaksi` (
 --
 
 INSERT INTO `transaksi` (`no_trans`, `total_belanja`, `tanggal`) VALUES
-('notra01', 4000, '2021-06-02'),
-('notra02', 24000, '2021-06-08'),
-('notra03', 10000, '2021-06-09');
+(1, 12000, '2021-07-18'),
+(8, 22000, '2021-07-19'),
+(9, 20000, '2021-07-19'),
+(10, 36000, '2021-07-19'),
+(11, 18000, '2021-07-19'),
+(12, 54000, '2021-07-19');
 
 --
 -- Indexes for dumped tables
@@ -160,9 +156,8 @@ ALTER TABLE `barang`
 --
 ALTER TABLE `detil_transaksi`
   ADD PRIMARY KEY (`id_detil`),
-  ADD KEY `id_petugas` (`id_petugas`),
-  ADD KEY `kode_barang` (`kode_barang`),
-  ADD KEY `no_trans` (`no_trans`);
+  ADD KEY `no_trans` (`no_trans`),
+  ADD KEY `kode_barang` (`kode_barang`);
 
 --
 -- Indexes for table `kategori`
@@ -183,6 +178,16 @@ ALTER TABLE `transaksi`
   ADD PRIMARY KEY (`no_trans`);
 
 --
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `transaksi`
+--
+ALTER TABLE `transaksi`
+  MODIFY `no_trans` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
 -- Constraints for dumped tables
 --
 
@@ -190,9 +195,8 @@ ALTER TABLE `transaksi`
 -- Constraints for table `detil_transaksi`
 --
 ALTER TABLE `detil_transaksi`
-  ADD CONSTRAINT `detil_transaksi_ibfk_2` FOREIGN KEY (`id_petugas`) REFERENCES `petugas` (`id_petugas`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `detil_transaksi_ibfk_3` FOREIGN KEY (`kode_barang`) REFERENCES `barang` (`kode_barang`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `detil_transaksi_ibfk_4` FOREIGN KEY (`no_trans`) REFERENCES `transaksi` (`no_trans`);
+  ADD CONSTRAINT `detil_transaksi_ibfk_1` FOREIGN KEY (`no_trans`) REFERENCES `transaksi` (`no_trans`) ON DELETE CASCADE,
+  ADD CONSTRAINT `detil_transaksi_ibfk_2` FOREIGN KEY (`kode_barang`) REFERENCES `barang` (`kode_barang`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
