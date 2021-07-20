@@ -104,7 +104,7 @@ public class View_barang extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID Barang", "Nama Barang", "Harga Beli", "Harga Jual", "Stok", "Diskon"
+                "ID Barang", "Nama Barang", "Harga Beli", "Harga Jual", "Stok", "Kategori"
             }
         ));
         tblbarang.setRowHeight(30);
