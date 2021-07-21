@@ -128,6 +128,9 @@
       </Layout>
       <SubComponents>
         <Component class="javax.swing.JPasswordField" name="txt_password">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_passwordActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel8">
           <Properties>
