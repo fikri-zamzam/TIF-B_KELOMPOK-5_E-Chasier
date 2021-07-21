@@ -1,7 +1,11 @@
 package UI;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import modul.konek;
 
@@ -80,6 +84,7 @@ public class Dashboard extends javax.swing.JFrame {
         txt_tgl = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_today = new javax.swing.JTable();
+        btn_cetak = new javax.swing.JButton();
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel2.setText("Username");
@@ -171,7 +176,7 @@ public class Dashboard extends javax.swing.JFrame {
         jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/logout.png"))); // NOI18N
 
         btnTambah5.setBackground(new java.awt.Color(245, 246, 248));
-        btnTambah5.setText("Laporan Penjualan");
+        btnTambah5.setText("Laporan Keuntungan");
         btnTambah5.setBorder(null);
         btnTambah5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -287,6 +292,13 @@ public class Dashboard extends javax.swing.JFrame {
             tbl_today.getColumnModel().getColumn(0).setResizable(false);
         }
 
+        btn_cetak.setText("Cetak");
+        btn_cetak.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cetakActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -297,6 +309,8 @@ public class Dashboard extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
+                        .addGap(18, 18, 18)
+                        .addComponent(btn_cetak)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(txt_tgl, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE))
@@ -308,8 +322,9 @@ public class Dashboard extends javax.swing.JFrame {
                 .addGap(52, 52, 52)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(txt_tgl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(34, 34, 34)
+                    .addComponent(txt_tgl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_cetak))
+                .addGap(32, 32, 32)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(100, Short.MAX_VALUE))
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -338,6 +353,7 @@ public class Dashboard extends javax.swing.JFrame {
         // TODO add your handling code here:
         Form_Petugas p = new Form_Petugas();
         p.setVisible(true);
+        dispose();
     }//GEN-LAST:event_btnTambah2ActionPerformed
 
     private void btnTambah3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambah3ActionPerformed
@@ -361,6 +377,27 @@ public class Dashboard extends javax.swing.JFrame {
     private void btnTambah5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambah5ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnTambah5ActionPerformed
+
+    private void btn_cetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cetakActionPerformed
+        // TODO add your handling code here:
+        Connection conn = null;
+        try{ 
+           conn = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/db_e-cashier","root","");
+        } catch(Exception e){
+            
+        }
+        
+        String file = "C:\\Users\\Fikri\\Documents\\NetBeansProjects\\E-cashier\\src\\Report\\ReportPenjualan.jrxml";
+        
+        JasperReport jr;
+        try {
+            jr = JasperCompileManager.compileReport(file);
+            JasperPrint jp = JasperFillManager.fillReport(jr,null,conn);
+            JasperViewer.viewReport(jp);
+        } catch (JRException ex){
+            Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE,null,ex);
+        }
+    }//GEN-LAST:event_btn_cetakActionPerformed
 
     /**
      * @param args the command line arguments
@@ -404,6 +441,7 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JButton btnTambah3;
     private javax.swing.JButton btnTambah4;
     private javax.swing.JButton btnTambah5;
+    private javax.swing.JButton btn_cetak;
     private java.awt.Button button1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
