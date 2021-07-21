@@ -54,6 +54,12 @@ public class Form_login extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(245, 246, 248));
 
+        txt_password.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_passwordActionPerformed(evt);
+            }
+        });
+
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/padlock.png"))); // NOI18N
 
@@ -178,6 +184,10 @@ public class Form_login extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(rootPane, "Gagal");
         }
     }//GEN-LAST:event_btn_loginActionPerformed
+
+    private void txt_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_passwordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_passwordActionPerformed
 
     /**
      * @param args the command line arguments
